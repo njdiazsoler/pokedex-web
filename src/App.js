@@ -1,26 +1,58 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import { Pokedex } from 'pokeapi-js-wrapper';
+import { CustomAlert, TextInput } from './components';
+import { Container, Fade, Row } from 'react-bootstrap';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      alertVariant: 'success',
+      alertMessage: '',
+      isAlertShown: false,
+      isLoadingData: true,
+      pokemon: null,
+      searchValue: '',
+    };
+  }
+
+  getAllPokemon = async (name) => {
+    const P = new Pokedex();
+    try {
+      const poke = await P.getPokemonsList();
+      console.log('poke is: ', poke);
+      this.setState({ pokemon: poke, searchValue: 'bul' });
+      return;
+    } catch (err) {
+      this.setState({ showAlert: true, alertMessage: err.message, alertVariant: 'danger' });
+    } finally {
+      this.setState({ isLoadingData: false });
+    }
+  };
+
+  componentDidMount() {
+    this.getAllPokemon();
+  }
+
+  render() {
+    return (
+      <Fade in={!this.state.isLoadingData}>
+        <Container>
+          <CustomAlert
+            alertMessage={this.state.alertMessage}
+            alertVariant={this.state.alertVariant}
+            dismissible={this.state.dismissible}
+            handleAlert={(value) => this.setState({ isAlertShown: value })}
+            showAlert={this.state.isAlertShown}
+          />
+          <Row>
+            <TextInput />
+          </Row>
+        </Container>
+      </Fade>
+    );
+  }
 }
 
 export default App;

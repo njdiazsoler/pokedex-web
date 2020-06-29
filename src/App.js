@@ -21,7 +21,7 @@ class App extends Component {
   getAllPokemon = async (name) => {
     const P = new Pokedex();
     try {
-      const poke = await P.getPokemonsList({ limit: 50 });
+      const poke = await P.getPokemonsList();
       this.setState({ pokemonData: poke.results, pokemon: poke.results, searchValue: 'bul' });
     } catch (err) {
       this.setState({ showAlert: true, alertMessage: err.message, alertVariant: 'danger' });

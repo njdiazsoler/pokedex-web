@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Pokedex } from 'pokeapi-js-wrapper';
 import { CustomAlert, CustomCard, PageFooter, TextInputWithButton } from './components';
-import { Col, Container, Fade, Row } from 'react-bootstrap';
+import { CardGroup, Col, Container, Fade, Row } from 'react-bootstrap';
 import './App.css';
 
 class App extends Component {
@@ -63,20 +63,24 @@ class App extends Component {
             showAlert={this.state.isAlertShown}
           />
           <h3 className="py-3">Pokémon Finder</h3>
-          <Row className="m-2">
+          <Row className="my-2">
             <TextInputWithButton buttonText="Find" onInputChange={this.handleInputChange} placeholder="Find Pokémon" />
           </Row>
-          <Row 
-            style={{ height: parseInt(`${windowHeight * 0.65}`, 10), overflowY: 'overlay' }} 
-            className="m-2 nes-container">
+          <CardGroup style={{ height: parseInt(`${windowHeight * 0.69}`, 10), overflowY: 'overlay' }} className="my-2 nes-container is-rounded mx-0">
             {pokemon.length > 0 &&
               pokemon.map((poke) => (
-                <Col className="p-1" lg={3} md={4}>
+                <Col key={poke.name} className="p-1" lg={3} md={4}>
                   <CustomCard cardData={poke} />
                 </Col>
               ))}
+          </CardGroup>
+          {/* TO DO - Pagination 
+          <Row className="nes-container is-rounded mx-0 my-2">
+            <PageFooter />
+          </Row> */}
+          <Row className="nes-container is-rounded mx-0 my-3">
+            <PageFooter />
           </Row>
-          <PageFooter />
         </Container>
       </Fade>
     );

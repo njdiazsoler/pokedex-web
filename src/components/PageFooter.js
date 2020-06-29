@@ -6,8 +6,9 @@ const PageFooter = (props) => {
     <Container className="footer-container">
       <Row className="separator" />
       <Row className="pt-2">
-        <Col className="d-flex flex-column justify-content-center" >
+        <Col className="d-flex flex-row justify-content-center" >
           <p className="m-0">Made by Nico Díaz Soler</p>
+          {/* <i className="nes-ash is-small" /> */}
         </Col>
         <Col 
           className="d-flex flex-row-reverse align-items-center">
@@ -16,7 +17,7 @@ const PageFooter = (props) => {
               Github
             </a>
           </div>
-          <i className="nes-ash is-small" />
+          <i className="nes-icon github is-medium" />
         </Col>
       </Row>
     </Container>

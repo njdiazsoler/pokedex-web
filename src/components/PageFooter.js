@@ -3,21 +3,20 @@ import { Col, Container, Row } from 'react-bootstrap';
 
 const PageFooter = (props) => {
   return (
-    <Container className="footer-container">
-      <Row className="separator" />
+    <Container>
       <Row className="pt-2">
-        <Col className="d-flex flex-row justify-content-center" >
+        <Col className="d-flex flex-row" >
           <p className="m-0">Made by Nico Díaz Soler</p>
           {/* <i className="nes-ash is-small" /> */}
         </Col>
         <Col 
-          className="d-flex flex-row-reverse align-items-center">
+          className="d-flex flex-row-reverse align-items-center flex-wrap justify-content-center">
           <div className="mx-1">
             <a href="https://github.com/njdiazsoler" rel="noopener noreferrer" target="_blank">
               Github
             </a>
           </div>
-          <i className="nes-icon github is-medium" />
+          <i className="nes-icon github is-small" />
         </Col>
       </Row>
     </Container>

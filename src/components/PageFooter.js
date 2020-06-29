@@ -3,17 +3,20 @@ import { Col, Container, Row } from 'react-bootstrap';
 
 const PageFooter = (props) => {
   return (
-    <Container className='footer-container'>
+    <Container className="footer-container">
       <Row className="separator" />
-      <Row>
-        <Col md={3}>Made by Nico Díaz Soler</Col>
-        <Col md={{offset: 6, span: 3}} className='d-flex align-items-center'>
-          <i className="nes-ash is-small" />
-          <div className='mx-1'>
-          <a href="https://github.com/njdiazsoler" rel='noopener noreferrer' target="_blank">
-            Github
-          </a>
+      <Row className="pt-2">
+        <Col className="d-flex flex-column justify-content-center" >
+          <p className="m-0">Made by Nico Díaz Soler</p>
+        </Col>
+        <Col 
+          className="d-flex flex-row-reverse align-items-center">
+          <div className="mx-1">
+            <a href="https://github.com/njdiazsoler" rel="noopener noreferrer" target="_blank">
+              Github
+            </a>
           </div>
+          <i className="nes-ash is-small" />
         </Col>
       </Row>
     </Container>

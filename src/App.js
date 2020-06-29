@@ -67,8 +67,8 @@ class App extends Component {
             <TextInputWithButton buttonText="Find" onInputChange={this.handleInputChange} placeholder="Find Pokémon" />
           </Row>
           <Row 
-            style={{ height: parseInt(`${windowHeight * 0.6}`, 10), overflowY: 'auto' }} 
-            className="m-2">
+            style={{ height: parseInt(`${windowHeight * 0.65}`, 10), overflowY: 'overlay' }} 
+            className="m-2 nes-container">
             {pokemon.length > 0 &&
               pokemon.map((poke) => (
                 <Col className="p-1" lg={3} md={4}>

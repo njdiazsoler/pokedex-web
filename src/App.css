@@ -1,7 +1,3 @@
 .pokedex-card {
   height: 20vh;
 }
-
-.pokedex-card:hover{
-  box-shadow: 2.3px 1.9px rgba(0, 0, 0, 0.15)
-}

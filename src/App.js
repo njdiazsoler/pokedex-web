@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { CustomAlert, CustomCard, CustomPagination, PageFooter, TextInputWithButton } from './components';
-import { CardGroup, Col, Container, Fade, Row } from 'react-bootstrap';
+import { Button, CardGroup, Col, Container, Fade, Modal, Row } from 'react-bootstrap';
+import UIUtils from './utils/ui'
 import ApiService from './services/api';
 import './App.css';
 
@@ -10,16 +11,17 @@ class App extends Component {
     this.state = {
       activePage: 1,
       alertVariant: '',
-      alertMessage: '!',
+      alertMessage: '',
       isAlertShown: false,
       isLoadingData: true,
+      limit: props.limit || 20,
+      offset: props.offset || 0,
       pokemon: [],
       pokemonData: [],
       searchValue: '',
-      windowHeight: 0,
-      limit: props.limit || 20,
-      offset: props.offset || 0,
+      showInfoModal: false,
       totalCount: 0,
+      windowHeight: 0,
     };
   }
 
@@ -67,6 +69,24 @@ class App extends Component {
     }
   };
 
+  closeInfoModal = () => {
+    this.setState({ showInfoModal: false })
+  }
+
+  renderPokemonInfoModal = () => {
+    const { selectedPokemon, showInfoModal } = this.state;
+    if(selectedPokemon){
+    const { id, name, sprites, types } = selectedPokemon;
+    return(<Modal dialogClassName="nes-dialog" centered show={showInfoModal} onHide={this.closeInfoModal}>
+      <Modal.Header closeButton>
+        <Modal.Title>{selectedPokemon && `#${id} ${UIUtils.capitalizeString(name)}`}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+    </Modal>)
+    }
+    return (<Modal dialogClassName='nes-dialog'></Modal>)
+  }
+
   updateWindowDimensions = () => {
     this.setState({ windowHeight: window.innerHeight });
   };
@@ -76,6 +96,7 @@ class App extends Component {
     return (
       <Fade in={true}>
         <Container>
+        {this.renderPokemonInfoModal()}
           <CustomAlert
             alertMessage={this.state.alertMessage}
             alertVariant={this.state.alertVariant}
@@ -99,11 +120,11 @@ class App extends Component {
                   {pokemon.length > 0 &&
                     pokemon.map((poke) => (
                       <Col key={poke.name} className="p-1" lg={3} md={4}>
-                        <CustomCard cardData={poke} />
+                        <CustomCard onClick={() => this.setState({ selectedPokemon: poke, showInfoModal: true })} cardData={poke} />
                       </Col>
                     ))}
                 </CardGroup>
-                <CustomPagination total={totalCount} activePage={activePage} limit={25} />
+                {/* <CustomPagination total={totalCount} activePage={activePage} limit={25} /> */}
               </>
             )}
           </Row>

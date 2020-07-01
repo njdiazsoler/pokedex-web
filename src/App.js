@@ -1,28 +1,38 @@
 import React, { Component } from 'react';
-import { Pokedex } from 'pokeapi-js-wrapper';
 import { CustomAlert, CustomCard, PageFooter, TextInputWithButton } from './components';
 import { CardGroup, Col, Container, Fade, Row } from 'react-bootstrap';
+import ApiService from './services/api';
 import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      alertVariant: 'success',
-      alertMessage: '',
+      alertVariant: '',
+      alertMessage: '!',
       isAlertShown: false,
       isLoadingData: true,
       pokemon: [],
+      pokemonData: [],
       searchValue: '',
       windowHeight: 0,
+      limit: props.limit || 25,
+      offset: props.offset || 0,
     };
   }
 
-  getAllPokemon = async (name) => {
-    const P = new Pokedex();
+  getFirstPokemonData = async () => {
+    const { limit, offset } = this.state;
+    const queryOptions = { limit, offset };
     try {
-      const poke = await P.getPokemonsList();
-      this.setState({ pokemonData: poke.results, pokemon: poke.results, searchValue: 'bul' });
+      const pokeList = await ApiService.getAllPokemon(queryOptions);
+      const result = [];
+      for (let i = 0; i < pokeList.results.length; i++) {
+        const poke = pokeList.results[i];
+        const pokeData = await ApiService.getOnePokemonByName(poke.name);
+        result.push(pokeData);
+      }
+      this.setState({ pokemonData: pokeList.results, pokemon: result });
     } catch (err) {
       this.setState({ showAlert: true, alertMessage: err.message, alertVariant: 'danger' });
     } finally {
@@ -31,19 +41,26 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.getAllPokemon();
+    this.getFirstPokemonData();
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
   }
 
-  handleInputChange = (e) => {
+  handleInputChange = async (e) => {
     const { value } = e.target;
-
-    this.setState((prevState, state) => {
-      const { pokemonData } = prevState;
-      const filteredPoke = pokemonData.filter((poke) => poke.name.match(value));
-      return { searchValue: value, pokemon: filteredPoke };
-    });
+    const { pokemonData } = this.state;
+    const filteredPoke = pokemonData.filter((poke) => poke.name.match(value));
+    const resultPoke = [];
+    for (let i = 0; i < filteredPoke.length; i++) {
+      const poke = filteredPoke[i];
+      const pokeData = await ApiService.getOnePokemonByName(poke.name);
+      resultPoke.push(pokeData);
+    }
+    if (value.length > 3) {
+      this.setState({ searchValue: value, pokemon: resultPoke });
+    } else {
+      this.setState({ pokemon: pokemonData });
+    }
   };
 
   updateWindowDimensions = () => {

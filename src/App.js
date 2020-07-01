@@ -119,7 +119,7 @@ class App extends Component {
                 <CardGroup className="mb-2">
                   {pokemon.length > 0 &&
                     pokemon.map((poke) => (
-                      <Col key={poke.name} className="p-1" lg={3} md={4}>
+                      <Col key={poke.name} className="p-1" xl={3} md={4}>
                         <CustomCard onClick={() => this.setState({ selectedPokemon: poke, showInfoModal: true })} cardData={poke} />
                       </Col>
                     ))}

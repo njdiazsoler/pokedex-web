@@ -4,12 +4,12 @@ import UIUtils from '../utils/ui';
 
 const CustomCard = (props) => {
   const { cardData } = props;
-  const { name, sprites, types } = cardData;
+  const { id, name, sprites, types } = cardData;
   return (
     <Card className="pokedex-card px-1 py-2 align-item-center">
-      <p>{`${UIUtils.capitalizeString(name)}`}</p>
-      <div className='d-flex flex-row'>
-        {sprites ? <Image rounded style={{ height: 100, width: 100 }} src={sprites && sprites.front_default} /> : <Spinner animation="border" />}
+      <p className='mb-0 text-nowrap'>{`#${id} ${UIUtils.capitalizeString(name)}`}</p>
+      <div className='d-flex flex-row justify-content-around align-items-center'>
+        {sprites && <Image alt={name} onLoad={() => <Spinner animation="border" />} rounded src={sprites && sprites.front_default} />}
         <div>{types && types.map(type => <p key={type.type.name}>{UIUtils.capitalizeString(type.type.name)}</p>)}</div>
       </div>
     </Card>

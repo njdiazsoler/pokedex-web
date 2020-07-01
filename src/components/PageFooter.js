@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 
-const PageFooter = (props) => {
+const PageFooter = () => {
   return (
     <Container>
       <Row className="pt-2">
@@ -13,7 +13,9 @@ const PageFooter = (props) => {
           className="d-flex flex-row-reverse align-items-center flex-wrap justify-content-center">
           <div className="mx-1">
             <a href="https://github.com/njdiazsoler" rel="noopener noreferrer" target="_blank">
+              <p className='m-0'>
               Github
+              </p>
             </a>
           </div>
           <i className="nes-icon github is-small" />

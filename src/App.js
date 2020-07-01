@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { CustomAlert, CustomCard, PageFooter, TextInputWithButton } from './components';
+import { CustomAlert, CustomCard, CustomPagination, PageFooter, TextInputWithButton } from './components';
 import { CardGroup, Col, Container, Fade, Row } from 'react-bootstrap';
 import ApiService from './services/api';
 import './App.css';
@@ -8,6 +8,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      activePage: 1,
       alertVariant: '',
       alertMessage: '!',
       isAlertShown: false,
@@ -16,8 +17,9 @@ class App extends Component {
       pokemonData: [],
       searchValue: '',
       windowHeight: 0,
-      limit: props.limit || 25,
+      limit: props.limit || 20,
       offset: props.offset || 0,
+      totalCount: 0,
     };
   }
 
@@ -25,18 +27,20 @@ class App extends Component {
     const { limit, offset } = this.state;
     const queryOptions = { limit, offset };
     try {
-      const pokeList = await ApiService.getAllPokemon(queryOptions);
+      const apiResponse = await ApiService.getAllPokemon(queryOptions);
       const result = [];
-      for (let i = 0; i < pokeList.results.length; i++) {
-        const poke = pokeList.results[i];
-        const pokeData = await ApiService.getOnePokemonByName(poke.name);
-        result.push(pokeData);
+      for (let i = 0; i < apiResponse.results.length; i++) {
+        const pokemon = apiResponse.results[i];
+        const pokemonData = await ApiService.getOnePokemonByName(pokemon.name);
+        result.push(pokemonData);
       }
-      this.setState({ pokemonData: pokeList.results, pokemon: result });
+      this.setState({ totalCount: apiResponse.count, pokemonData: result, pokemon: result });
     } catch (err) {
       this.setState({ showAlert: true, alertMessage: err.message, alertVariant: 'danger' });
     } finally {
+      // setTimeout(() => {
       this.setState({ isLoadingData: false });
+      // }, 500000);
     }
   };
 
@@ -49,15 +53,15 @@ class App extends Component {
   handleInputChange = async (e) => {
     const { value } = e.target;
     const { pokemonData } = this.state;
-    const filteredPoke = pokemonData.filter((poke) => poke.name.match(value));
-    const resultPoke = [];
-    for (let i = 0; i < filteredPoke.length; i++) {
-      const poke = filteredPoke[i];
-      const pokeData = await ApiService.getOnePokemonByName(poke.name);
-      resultPoke.push(pokeData);
+    const filteredPokemon = pokemonData.filter((poke) => poke.name.match(value));
+    const resultPokemon = [];
+    for (let i = 0; i < filteredPokemon.length; i++) {
+      const pokemon = filteredPokemon[i];
+      const pokemonData = await ApiService.getOnePokemonByName(pokemon.name);
+      resultPokemon.push(pokemonData);
     }
     if (value.length > 3) {
-      this.setState({ searchValue: value, pokemon: resultPoke });
+      this.setState({ searchValue: value, pokemon: resultPokemon });
     } else {
       this.setState({ pokemon: pokemonData });
     }
@@ -68,9 +72,9 @@ class App extends Component {
   };
 
   render() {
-    const { pokemon, windowHeight } = this.state;
+    const { activePage, isLoadingData, limit, pokemon, totalCount, windowHeight } = this.state;
     return (
-      <Fade in={!this.state.isLoadingData}>
+      <Fade in={true}>
         <Container>
           <CustomAlert
             alertMessage={this.state.alertMessage}
@@ -83,18 +87,26 @@ class App extends Component {
           <Row className="my-2">
             <TextInputWithButton buttonText="Find" onInputChange={this.handleInputChange} placeholder="Find Pokémon" />
           </Row>
-          <CardGroup style={{ height: parseInt(`${windowHeight * 0.69}`, 10), overflowY: 'overlay' }} className="my-2 nes-container is-rounded mx-0">
-            {pokemon.length > 0 &&
-              pokemon.map((poke) => (
-                <Col key={poke.name} className="p-1" lg={3} md={4}>
-                  <CustomCard cardData={poke} />
-                </Col>
-              ))}
-          </CardGroup>
-          {/* TO DO - Pagination 
-          <Row className="nes-container is-rounded mx-0 my-2">
-            <PageFooter />
-          </Row> */}
+          <Row
+            style={{ height: parseInt(`${windowHeight * 0.69}`, 10), overflowY: 'overlay' }}
+            className="my-2 nes-container is-rounded mx-0 justify-content-center"
+          >
+            {isLoadingData ? (
+              <progress className="align-self-center w-75 nes-progress" value={pokemon.length} max={limit} />
+            ) : (
+              <>
+                <CardGroup className="mb-2">
+                  {pokemon.length > 0 &&
+                    pokemon.map((poke) => (
+                      <Col key={poke.name} className="p-1" lg={3} md={4}>
+                        <CustomCard cardData={poke} />
+                      </Col>
+                    ))}
+                </CardGroup>
+                <CustomPagination total={totalCount} activePage={activePage} limit={25} />
+              </>
+            )}
+          </Row>
           <Row className="nes-container is-rounded mx-0 my-3">
             <PageFooter />
           </Row>

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { CustomAlert, CustomCard, CustomPagination, PageFooter, TextInputWithButton } from './components';
 import { Button, CardGroup, Col, Container, Fade, Image, Modal, Row } from 'react-bootstrap';
 import UIUtils from './utils/ui';
-import ApiService from './services/api';
+import makeApiCall from './services/api';
 import './App.css';
 
 class App extends Component {
@@ -29,14 +29,8 @@ class App extends Component {
     const { limit, offset } = this.state;
     const queryOptions = { limit, offset };
     try {
-      const apiResponse = await ApiService.getAllPokemon(queryOptions);
-      const result = [];
-      for (let i = 0; i < apiResponse.results.length; i++) {
-        const pokemon = apiResponse.results[i];
-        const pokemonData = await ApiService.getOnePokemonByName(pokemon.name);
-        result.push(pokemonData);
-      }
-      this.setState({ totalCount: apiResponse.count, pokemonData: result, pokemon: result });
+      const apiResponse = await makeApiCall('/pokemon', queryOptions);
+      this.setState({ totalCount: apiResponse.count, pokemonData: apiResponse.result, pokemon: apiResponse.result });
     } catch (err) {
       this.setState({ showAlert: true, alertMessage: err.message, alertVariant: 'danger' });
     } finally {
@@ -55,13 +49,7 @@ class App extends Component {
   handleInputChange = async (e) => {
     const { value } = e.target;
     const { pokemonData } = this.state;
-    const filteredPokemon = pokemonData.filter((poke) => poke.name.match(value));
-    const resultPokemon = [];
-    for (let i = 0; i < filteredPokemon.length; i++) {
-      const pokemon = filteredPokemon[i];
-      const pokemonData = await ApiService.getOnePokemonByName(pokemon.name);
-      resultPokemon.push(pokemonData);
-    }
+    const resultPokemon = pokemonData.filter((poke) => poke.name.match(value));
     if (value.length > 3) {
       this.setState({ searchValue: value, pokemon: resultPokemon });
     } else {

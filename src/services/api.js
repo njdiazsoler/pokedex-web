@@ -1,18 +1,12 @@
-import { Pokedex } from 'pokeapi-js-wrapper';
+import axios from 'axios';
+import config from '../config';
 
-const pokeDex = new Pokedex();
-
-const getOnePokemonByName = async (name) => {
-    const singlePokemonData = await pokeDex.getPokemonByName(name);
-    return singlePokemonData
-};
-
-const getAllPokemon = async (options) => {
-  const allPokemonData = await pokeDex.getPokemonsList(options)
-  return allPokemonData;
+const makeApiCall = async (path, options) => {
+  if(options){
+    path += `?limit=${options.limit}&offset=${options.offset}`
+  }
+  const promise = await axios.get(`${config.api.url}${path}`);
+  return promise.data.data;
 }
 
-export default {
-  getOnePokemonByName,
-  getAllPokemon,
-}
+export default makeApiCall;

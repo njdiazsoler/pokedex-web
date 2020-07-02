@@ -1,4 +1,5 @@
-FROM node:13.12.0-alpine
+
+FROM node:latest as build
 
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
@@ -11,7 +12,11 @@ RUN npm install react-scripts@3.4.1 -g --silent
 
 COPY . .
 
-EXPOSE 8080
-EXPOSE 3000
+RUN npm run build
 
-CMD [ "npm", "start" ]
+
+# # production environment
+FROM nginx:stable-alpine
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

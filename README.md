@@ -22,7 +22,7 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.<br />
 If you would like to run the build using docker, you could run.
 ```
-$ docker build -t pokedex-web
+$ docker build -t pokedex-web .
 $ docker run -p 3000:80 pokedex-web
 ```
 

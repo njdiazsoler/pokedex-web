@@ -76,7 +76,7 @@ class App extends Component {
   renderPokemonInfoModal = () => {
     const { selectedPokemon, showInfoModal } = this.state;
     if (selectedPokemon) {
-      const { id, name, sprites, types } = selectedPokemon;
+      const { id, name, sprites } = selectedPokemon;
       return (
         <Modal id="poke-info-modal" size="lg" centered show={showInfoModal} onHide={this.closeInfoModal}>
           <Modal.Body>

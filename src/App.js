@@ -103,7 +103,6 @@ class App extends Component {
                 </div>
               </Col>
             </Row>
-            Woohoo, you're reading this text in a modal!
           </Modal.Body>
         </Modal>
       );
@@ -116,7 +115,9 @@ class App extends Component {
   };
 
   render() {
-    const { activePage, isLoadingData, limit, pokemon, totalCount, windowHeight } = this.state;
+    const { 
+      // pagination state variables - activePage, totalCount,
+      isLoadingData, limit, pokemon, windowHeight } = this.state;
     return (
       <Fade in={true}>
         <Container>
@@ -140,7 +141,7 @@ class App extends Component {
               <progress className="align-self-center w-75 nes-progress" value={pokemon.length} max={limit} />
             ) : (
               <>
-                <CardGroup className="mb-2">
+                <CardGroup className="w-100 mb-2">
                   {pokemon.length > 0 &&
                     pokemon.map((poke) => (
                       <Col key={poke.name} className="p-1" xl={3} md={4}>
@@ -148,7 +149,7 @@ class App extends Component {
                       </Col>
                     ))}
                 </CardGroup>
-                <CustomPagination total={totalCount} activePage={activePage} limit={25} />
+                {/* <CustomPagination total={totalCount} activePage={activePage} limit={25} /> */}
               </>
             )}
           </Row>

@@ -3,10 +3,23 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 
 describe('CustomAlert component test', () => {
-  test('renders alert message component', () => {
+  test('test alert component - danger', () => {
     const alertProps = {
       alertMessage: 'This is a test Alert!',
       alertVariant: 'danger',
+      dismissible: true,
+      handleAlert: () => {},
+      showAlert: true,
+    };
+    render(<CustomAlert {...alertProps} />);
+    const alertText = screen.getByText(alertProps.alertMessage);
+    expect(alertText).toBeInTheDocument();
+  });
+  
+  test('test alert component - success', () => {
+    const alertProps = {
+      alertMessage: 'Alert success!',
+      alertVariant: 'success',
       dismissible: true,
       handleAlert: () => {},
       showAlert: true,

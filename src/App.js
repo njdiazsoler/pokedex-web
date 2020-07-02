@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { CustomAlert, CustomCard, CustomPagination, PageFooter, TextInputWithButton } from './components';
-import { Button, CardGroup, Col, Container, Fade, Modal, Row } from 'react-bootstrap';
-import UIUtils from './utils/ui'
+import { Button, CardGroup, Col, Container, Fade, Image, Modal, Row } from 'react-bootstrap';
+import UIUtils from './utils/ui';
 import ApiService from './services/api';
 import './App.css';
 
@@ -70,22 +70,46 @@ class App extends Component {
   };
 
   closeInfoModal = () => {
-    this.setState({ showInfoModal: false })
-  }
+    this.setState({ showInfoModal: false });
+  };
 
   renderPokemonInfoModal = () => {
     const { selectedPokemon, showInfoModal } = this.state;
-    if(selectedPokemon){
-    const { id, name, sprites, types } = selectedPokemon;
-    return(<Modal dialogClassName="nes-dialog" centered show={showInfoModal} onHide={this.closeInfoModal}>
-      <Modal.Header closeButton>
-        <Modal.Title>{selectedPokemon && `#${id} ${UIUtils.capitalizeString(name)}`}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-    </Modal>)
+    if (selectedPokemon) {
+      const { id, name, sprites, types } = selectedPokemon;
+      return (
+        <Modal id="poke-info-modal" size="lg" centered show={showInfoModal} onHide={this.closeInfoModal}>
+          <Modal.Body>
+            <Row className="flex-row-reverse">
+              <Button onClick={this.closeInfoModal} className="close">
+                x
+              </Button>
+            </Row>
+            <Row className="justify-content-between">
+              <Modal.Title>{selectedPokemon && `#${id} ${UIUtils.capitalizeString(name)}`}</Modal.Title>
+            </Row>
+            <Row>
+              <Col className='d-flex justify-content-center' lg={6}>
+                <Image src={sprites.front_default} className='w-100' />
+              </Col>
+              <Col lg={6}>
+                <div className="d-flex flex-column align-items-center">
+                  <Row>
+                    <p>Height {selectedPokemon.height}</p>
+                  </Row>
+                  <Row>
+                    <p>Weight {selectedPokemon.weight}</p>
+                  </Row>
+                </div>
+              </Col>
+            </Row>
+            Woohoo, you're reading this text in a modal!
+          </Modal.Body>
+        </Modal>
+      );
     }
-    return (<Modal dialogClassName='nes-dialog'></Modal>)
-  }
+    return <Modal dialogClassName="nes-dialog"></Modal>;
+  };
 
   updateWindowDimensions = () => {
     this.setState({ windowHeight: window.innerHeight });
@@ -96,7 +120,7 @@ class App extends Component {
     return (
       <Fade in={true}>
         <Container>
-        {this.renderPokemonInfoModal()}
+          {this.renderPokemonInfoModal()}
           <CustomAlert
             alertMessage={this.state.alertMessage}
             alertVariant={this.state.alertVariant}
@@ -124,7 +148,7 @@ class App extends Component {
                       </Col>
                     ))}
                 </CardGroup>
-                {/* <CustomPagination total={totalCount} activePage={activePage} limit={25} /> */}
+                <CustomPagination total={totalCount} activePage={activePage} limit={25} />
               </>
             )}
           </Row>

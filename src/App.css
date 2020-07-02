@@ -1,3 +1,9 @@
 .pokedex-card {
   height: 20vh;
 }
+
+.modal-content {
+  padding: 1.5rem 2rem!important;
+  padding-top: 0px!important;
+  border: 6px solid black!important;
+}

@@ -1,37 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Pagination } from 'react-bootstrap';
+import { Button, Row } from 'react-bootstrap';
 
 const CustomPagination = (props) => {
-  const { activePage, limit, total } = props;
-  const maxPages = Math.floor(total/limit);
-  const items = [];
-  if (maxPages === 1) {
-    items.push(
-      <Pagination.Item key={maxPages} active={true}>
-        {maxPages}
-      </Pagination.Item>
-    );
-  } else {
-    for (let i = 1; i <= maxPages; i++) {
-      if(i>5){
-        items.push(<Pagination.Ellipsis />);
-        break
-      }
-      items.push(
-        <Pagination.Item key={i} active={i === activePage}>
-          {i}
-        </Pagination.Item>
-      );
-    }
-  }
-  return <Pagination size="sm">{items}</Pagination>;
+  const { handlePageChange, isLastPage, offset } = props;
+  return (
+    <Row className='custom-pagination-row'>
+      <Button onClick={() => handlePageChange()} className={offset === 0 ? "nes-btn is-disabled" : "nes-btn" }>{'<'}</Button>
+      <Button onClick={() => handlePageChange('right')} className={isLastPage ? "nes-btn is-disabled" : "nes-btn" }>{'>'}</Button>
+    </Row>
+  );
 };
 
 CustomPagination.propTypes = {
-  activePage: PropTypes.number.isRequired,
-  limit: PropTypes.number.isRequired,
-  total: PropTypes.number.isRequired,
-}
+  handlePageChange: PropTypes.func.isRequired,
+  offset: PropTypes.number.isRequired
+};
 
 export default CustomPagination;

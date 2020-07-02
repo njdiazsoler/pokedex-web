@@ -7,3 +7,7 @@
   padding-top: 0px!important;
   border: 6px solid black!important;
 }
+
+.custom-pagination-row {
+  height: 50px
+}

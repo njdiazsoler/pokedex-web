@@ -26,4 +26,4 @@ $ docker build -t pokedex-web .
 $ docker run -p 3000:80 pokedex-web
 ```
 
-Your app is ready to be deployed!
+The web app is ready!

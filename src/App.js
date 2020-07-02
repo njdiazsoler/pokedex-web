@@ -49,7 +49,7 @@ class App extends Component {
   handleInputChange = async (e) => {
     const { value } = e.target;
     const { pokemonData } = this.state;
-    const resultPokemon = pokemonData.filter((poke) => poke.name.match(value));
+    const resultPokemon = pokemonData.filter((poke) => poke.name.match(value.toLowerCase()));
     if (value.length > 3) {
       this.setState({ searchValue: value, pokemon: resultPokemon });
     } else {

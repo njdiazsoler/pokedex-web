@@ -14,7 +14,7 @@ class App extends Component {
       alertMessage: '',
       isAlertShown: false,
       isLoadingData: true,
-      limit: props.limit || 20,
+      limit: props.limit || 40,
       offset: props.offset || 0,
       pokemon: [],
       pokemonData: [],
@@ -25,7 +25,7 @@ class App extends Component {
     };
   }
 
-  getFirstPokemonData = async () => {
+  getPokemonData = async () => {
     const { limit, offset } = this.state;
     const queryOptions = { limit, offset };
     try {
@@ -34,33 +34,60 @@ class App extends Component {
     } catch (err) {
       this.setState({ showAlert: true, alertMessage: err.message, alertVariant: 'danger' });
     } finally {
-      // setTimeout(() => {
       this.setState({ isLoadingData: false });
-      // }, 500000);
-    }
+   }
   };
 
   componentDidMount() {
-    this.getFirstPokemonData();
+    this.getPokemonData();
     this.updateWindowDimensions();
     window.addEventListener('resize', this.updateWindowDimensions);
   }
-
-  handleInputChange = async (e) => {
-    const { value } = e.target;
-    const { pokemonData } = this.state;
-    const resultPokemon = pokemonData.filter((poke) => poke.name.match(value.toLowerCase()));
-    if (value.length > 3) {
-      this.setState({ searchValue: value, pokemon: resultPokemon });
-    } else {
-      this.setState({ pokemon: pokemonData });
-    }
-  };
 
   closeInfoModal = () => {
     this.setState({ showInfoModal: false });
   };
 
+  handleClick = async () => {
+    const { pokemonData, searchValue } = this.state;
+    if (searchValue.length === 0) {
+      this.setState({ pokemon: pokemonData });
+    } else if (searchValue.length >= 3){
+      try{
+        const result = await makeApiCall('/pokemon/search', { keyword: searchValue});
+        this.setState({ pokemon: result });
+      }catch(err){
+        console.error(err);
+        this.setState({ showAlert: true, alertMessage: err.message, alertVariant: 'danger' });
+      }
+    } else {
+      this.setState({ showAlert: true, alertMessage: 'No hay texto seleccionado!', alertVariant: 'danger' });
+      return false;
+    }
+  }
+
+  handleInputChange = async (e) => {
+    const { value } = e.target;
+    this.setState({ searchValue: value })
+  };
+
+  handlePageChange = (direction) => {
+    this.setState(
+      (prevState) => {
+        const { limit, offset } = prevState;
+        let newOffset = 0;
+        if (direction) {
+          newOffset = offset + limit;
+        } else {
+          newOffset = offset - limit;
+        }
+        return { offset: newOffset, isLoadingData: true };
+      },
+      () => this.getPokemonData()
+    );
+  };
+
+  // Move modal to separate component
   renderPokemonInfoModal = () => {
     const { selectedPokemon, showInfoModal } = this.state;
     if (selectedPokemon) {
@@ -77,8 +104,8 @@ class App extends Component {
               <Modal.Title>{selectedPokemon && `#${id} ${UIUtils.capitalizeString(name)}`}</Modal.Title>
             </Row>
             <Row>
-              <Col className='d-flex justify-content-center' lg={6}>
-                <Image src={sprites.front_default} className='w-100' />
+              <Col className="d-flex justify-content-center" lg={6}>
+                <Image src={sprites.front_default} className="w-100" />
               </Col>
               <Col lg={6}>
                 <div className="d-flex flex-column align-items-center">
@@ -103,9 +130,7 @@ class App extends Component {
   };
 
   render() {
-    const { 
-      // pagination state variables - activePage, totalCount,
-      isLoadingData, limit, pokemon, windowHeight } = this.state;
+    const { isLoadingData, limit, loadProgress, offset, pokemon, totalCount, windowHeight } = this.state;
     return (
       <Fade in={true}>
         <Container>
@@ -119,25 +144,25 @@ class App extends Component {
           />
           <h3 className="py-3">Pokémon Finder</h3>
           <Row className="my-2">
-            <TextInputWithButton buttonText="Find" onInputChange={this.handleInputChange} placeholder="Find Pokémon" />
+            <TextInputWithButton buttonText="Find" onButtonClick={this.handleClick} onInputChange={this.handleInputChange} placeholder="Find Pokémon" />
           </Row>
           <Row
             style={{ height: parseInt(`${windowHeight * 0.69}`, 10), overflowY: 'overlay' }}
             className="my-2 nes-container is-rounded mx-0 justify-content-center"
           >
             {isLoadingData ? (
-              <progress className="align-self-center w-75 nes-progress" value={pokemon.length} max={limit} />
+              <progress id="custom-progress-bar" className="align-self-center w-75 nes-progress" value={0} max={100} />
             ) : (
               <>
                 <CardGroup className="w-100 mb-2">
-                  {pokemon.length > 0 &&
+                  {pokemon && pokemon.length > 0 ?
                     pokemon.map((poke) => (
                       <Col key={poke.name} className="p-1" xl={3} md={4}>
                         <CustomCard onClick={() => this.setState({ selectedPokemon: poke, showInfoModal: true })} cardData={poke} />
                       </Col>
-                    ))}
+                    )): <p>No data found.</p>}
                 </CardGroup>
-                {/* <CustomPagination total={totalCount} activePage={activePage} limit={25} /> */}
+                <CustomPagination handlePageChange={this.handlePageChange} offset={offset} isLastPage={totalCount - offset < limit ? true : false} />
               </>
             )}
           </Row>

@@ -24,6 +24,8 @@ class App extends Component {
       windowHeight: 0,
     };
   }
+  
+  console.log(this.state);
 
   getPokemonData = async () => {
     const { limit, offset } = this.state;
